@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Login or create a customer account on Harvest Lane.">
+<title>Customer Login | Harvest Lane</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+:root{--green:#174d35;--green2:#286b49;--cream:#fbfcf8;--light:#f0f5ed;--text:#202b23;--muted:#78847b;--orange:#e6a04c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+header{height:76px;background:white;display:flex;align-items:center;justify-content:space-between;padding:0 6%;border-bottom:1px solid #e9eee8}
+.logo{font:800 27px 'Playfair Display',serif;color:var(--green)}
+.logo span{color:var(--orange)}
+.back{color:var(--green);font-weight:700;font-size:14px}
+main{width:min(470px,92%);margin:48px auto;flex:1}
+.card{background:white;border:1px solid #e7ede5;border-radius:18px;padding:32px;box-shadow:0 14px 40px #173c2510}
+.eyebrow{color:#bd8037;font-size:11px;font-weight:800;letter-spacing:2px}
+h1{font:700 32px 'Playfair Display',serif;color:var(--green);margin:9px 0}
+.sub{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:23px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f0f5ed;padding:5px;border-radius:9px;margin-bottom:22px}
+.tabs button{border:0;background:transparent;padding:11px;border-radius:7px;font-weight:700;color:var(--green);cursor:pointer}
+.tabs button.active{background:var(--green);color:white}
+.field{margin-bottom:15px}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:7px;color:#35443a}
+input{width:100%;padding:13px 14px;border:1px solid #dce4dc;border-radius:8px;outline:none;font:inherit;background:#fff}
+input:focus{border-color:var(--green2);box-shadow:0 0 0 3px #286b4915}
+.btn{width:100%;border:0;border-radius:8px;padding:14px;background:var(--green);color:white;font-weight:700;font:inherit;cursor:pointer;margin-top:7px}
+.btn:hover{background:var(--green2)}
+.note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:17px}
+.message{display:none;margin-top:14px;padding:11px 12px;border-radius:8px;font-size:13px;line-height:1.5}
+.message.show{display:block}.message.error{background:#fff0ee;color:#a13b2d}.message.success{background:#edf7ee;color:#205c36}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:12px}
+@media(max-width:520px){header{padding:0 5%}.logo{font-size:23px}.card{padding:24px}main{margin:30px auto}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="index.html">Harvest<span>Lane.</span></a>
+  <a class="back" href="index.html">← Back to marketplace</a>
+</header>
+<main>
+  <section class="card">
+    <span class="eyebrow">CUSTOMER ACCOUNT</span>
+    <h1 id="heading">Welcome back</h1>
+    <p class="sub" id="subtitle">Login to continue to Harvest Lane.</p>
+    <div class="tabs">
+      <button type="button" class="active" id="loginTab" onclick="showMode('login')">Login</button>
+      <button type="button" id="registerTab" onclick="showMode('register')">Create account</button>
+    </div>
+    <form id="authForm" onsubmit="handleSubmit(event)">
+      <div id="nameField" class="field" style="display:none">
+        <label for="fullName">Full name</label>
+        <input id="fullName" type="text" placeholder="Enter your name">
+      </div>
+      <div class="field">
+        <label for="email">Email address</label>
+        <input id="email" type="email" placeholder="name@example.com" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Enter password" minlength="6" required>
+      </div>
+      <button class="btn" id="submitBtn" type="submit">Login</button>
+      <div id="message" class="message" role="status"></div>
+    </form>
+    <p class="note">Demo authentication: account details are stored only in this browser using localStorage. This is for a front-end project, not secure production login.</p>
+  </section>
+</main>
+<footer>© 2026 Harvest Lane. All rights reserved.</footer>
+
+<script>
+const ROLE = 'Customer';
+const REDIRECT = 'index.html';          // customers go back to the marketplace
+function getExtraData(){ return {}; }   // customers have no extra fields
+</script>
+<script src="auth.js"></script>
+</body>
+</html>

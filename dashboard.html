@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Manage your store and products on Harvest Lane.">
+<title>Store Dashboard | Harvest Lane</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+:root{--green:#174d35;--green2:#286b49;--cream:#fbfcf8;--light:#f0f5ed;--text:#202b23;--muted:#78847b;--orange:#e6a04c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+button,input,select{font:inherit}
+header{height:76px;background:white;display:flex;align-items:center;justify-content:space-between;padding:0 6%;border-bottom:1px solid #e9eee8;position:sticky;top:0;z-index:10}
+.logo{font:800 27px 'Playfair Display',serif;color:var(--green)}
+.logo span{color:var(--orange)}
+.actions{display:flex;gap:10px;align-items:center}
+.btn{border:0;border-radius:8px;padding:11px 16px;background:var(--green);color:white;font-weight:700;cursor:pointer;display:inline-block}
+.btn:hover{background:var(--green2)}
+.btn-outline{background:white;color:var(--green);border:1px solid #cbd8cc}
+.btn-outline:hover{background:var(--light)}
+.who{font-size:13px;color:var(--muted);text-align:right;line-height:1.4}
+.who strong{display:block;color:var(--green);font-size:14px}
+.wrap{padding:40px 6% 60px;max-width:1200px;margin:0 auto}
+.top h1{font:700 34px 'Playfair Display',serif;color:var(--green)}
+.top p{color:var(--muted);margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:26px 0}
+.stat{background:white;border:1px solid #e7ede5;border-radius:14px;padding:18px 20px}
+.stat b{display:block;font-size:26px;color:var(--green)}
+.stat span{font-size:13px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:start}
+.card{background:white;border:1px solid #e7ede5;border-radius:18px;padding:26px;box-shadow:0 14px 40px #173c2510}
+.card h2{font:700 22px 'Playfair Display',serif;color:var(--green);margin-bottom:18px}
+.field{margin-bottom:14px}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:#35443a}
+input,select{width:100%;padding:12px 13px;border:1px solid #dce4dc;border-radius:8px;outline:none;background:#fff}
+input:focus,select:focus{border-color:var(--green2);box-shadow:0 0 0 3px #286b4915}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hint{font-size:12px;color:var(--muted);margin-top:5px}
+.preview{display:none;width:100%;height:150px;object-fit:cover;border-radius:10px;margin-top:10px;background:#eee}
+.preview.show{display:block}
+.full{width:100%;margin-top:6px;padding:13px}
+.message{display:none;margin-top:12px;padding:10px 12px;border-radius:8px;font-size:13px}
+.message.show{display:block}.message.error{background:#fff0ee;color:#a13b2d}.message.success{background:#edf7ee;color:#205c36}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.product{border:1px solid #e9eee8;border-radius:13px;overflow:hidden;background:white}
+.product img{width:100%;height:140px;object-fit:cover;background:#eee}
+.pinfo{padding:13px}
+.pinfo small{color:var(--muted)}
+.pinfo h3{font-size:15px;color:var(--green);margin:5px 0}
+.pbottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.price{font-weight:800;color:var(--green)}
+.del{background:#fff0ee;color:#a13b2d;border:0;border-radius:6px;padding:7px 11px;font-weight:700;font-size:12px;cursor:pointer}
+.del:hover{background:#ffe2de}
+.empty{text-align:center;color:var(--muted);padding:44px 10px;line-height:1.7}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:520px){header{padding:0 4%}.logo{font-size:22px}.who{display:none}.wrap{padding:28px 5% 50px}.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">Harvest<span>Lane.</span></a>
+  <div class="actions">
+    <div class="who"><strong id="ownerName">Owner</strong><span id="storeLabel">Store</span></div>
+    <a class="btn btn-outline" href="index.html">View marketplace</a>
+    <button class="btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="top">
+    <h1 id="welcome">Your store</h1>
+    <p>Add products here. They appear on the marketplace right away.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="statCount">0</b><span>Products listed</span></div>
+    <div class="stat"><b id="statCats">0</b><span>Categories</span></div>
+    <div class="stat"><b id="statValue">₹0</b><span>Total price of all items</span></div>
+  </div>
+
+  <div class="layout">
+    <section class="card">
+      <h2>Add a product</h2>
+      <form id="productForm" onsubmit="addProduct(event)">
+        <div class="field">
+          <label for="pName">Product name</label>
+          <input id="pName" type="text" placeholder="e.g. Fresh Mangoes" maxlength="60" required>
+        </div>
+        <div class="field">
+          <label for="pCategory">Category</label>
+          <select id="pCategory" required>
+            <option value="Grocery">Grocery &amp; Food</option>
+            <option value="Fashion">Fashion &amp; Clothing</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Home">Home &amp; Living</option>
+            <option value="Beauty">Beauty &amp; Care</option>
+            <option value="Books">Books &amp; Stationery</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="pPrice">Price (₹)</label>
+            <input id="pPrice" type="number" min="1" step="1" placeholder="120" required>
+          </div>
+          <div class="field">
+            <label for="pUnit">Unit</label>
+            <input id="pUnit" type="text" placeholder="kg, piece, pack" value="piece" maxlength="15" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="pImageFile">Product photo</label>
+          <input id="pImageFile" type="file" accept="image/*" onchange="loadImage(this)">
+          <p class="hint">Upload a photo, or paste an image link below.</p>
+        </div>
+        <div class="field">
+          <input id="pImageUrl" type="url" placeholder="https://example.com/photo.jpg" oninput="previewUrl(this.value)">
+          <img id="preview" class="preview" alt="Product preview">
+        </div>
+        <button class="btn full" type="submit">Add product</button>
+        <div id="message" class="message" role="status"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Your products</h2>
+      <div class="grid" id="myProducts"></div>
+    </section>
+  </div>
+</main>
+
+<script src="auth.js"></script>
+<script>
+// Only logged-in store owners may open this page
+const user = getUser();
+if (!user || user.role !== "Store Owner") {
+  location.replace("owner-auth.html");
+}
+
+const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="#f0f5ed"/><text x="50%" y="50%" fill="#78847b" font-family="sans-serif" font-size="26" text-anchor="middle">No photo</text></svg>'
+);
+let uploadedImage = "";   // resized photo from file input (data URL)
+
+document.getElementById("ownerName").textContent = user ? user.name : "";
+document.getElementById("storeLabel").textContent = user ? user.storeName : "";
+document.getElementById("welcome").textContent = user ? user.storeName + " dashboard" : "";
+
+function showMsg(text, type) {
+  const box = document.getElementById("message");
+  box.textContent = text;
+  box.className = "message show " + type;
+}
+
+function setPreview(src) {
+  const img = document.getElementById("preview");
+  if (src) { img.src = src; img.classList.add("show"); }
+  else { img.removeAttribute("src"); img.classList.remove("show"); }
+}
+
+function previewUrl(url) {
+  uploadedImage = "";
+  document.getElementById("pImageFile").value = "";
+  setPreview(url.trim());
+}
+
+// Shrink the photo before saving so localStorage does not fill up
+function loadImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 600 / img.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      uploadedImage = canvas.toDataURL("image/jpeg", 0.8);
+      document.getElementById("pImageUrl").value = "";
+      setPreview(uploadedImage);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function addProduct(event) {
+  event.preventDefault();
+  const image = uploadedImage || document.getElementById("pImageUrl").value.trim() || PLACEHOLDER;
+  const product = {
+    id: Date.now(),
+    name: document.getElementById("pName").value.trim(),
+    category: document.getElementById("pCategory").value,
+    store: user.storeName,
+    ownerEmail: user.email,
+    price: Number(document.getElementById("pPrice").value),
+    unit: document.getElementById("pUnit").value.trim() || "piece",
+    image
+  };
+  const list = getStoredProducts();
+  list.push(product);
+  try {
+    saveStoredProducts(list);
+  } catch (e) {
+    return showMsg("Storage is full. Use a smaller photo or an image link instead.", "error");
+  }
+  document.getElementById("productForm").reset();
+  document.getElementById("pUnit").value = "piece";
+  uploadedImage = "";
+  setPreview("");
+  showMsg(product.name + " added to your store.", "success");
+  renderMine();
+}
+
+function deleteProduct(id) {
+  if (!confirm("Remove this product from your store?")) return;
+  saveStoredProducts(getStoredProducts().filter(p => p.id !== id));
+  renderMine();
+}
+
+function renderMine() {
+  const mine = getStoredProducts().filter(p => p.ownerEmail === user.email);
+  document.getElementById("statCount").textContent = mine.length;
+  document.getElementById("statCats").textContent = new Set(mine.map(p => p.category)).size;
+  document.getElementById("statValue").textContent = "₹" + mine.reduce((s, p) => s + p.price, 0);
+
+  document.getElementById("myProducts").innerHTML = mine.length
+    ? mine.map(p => `
+      <article class="product">
+        <img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.onerror=null;this.src=PLACEHOLDER">
+        <div class="pinfo">
+          <small>${esc(p.category)}</small>
+          <h3>${esc(p.name)}</h3>
+          <div class="pbottom">
+            <span class="price">₹${p.price} <small>/ ${esc(p.unit)}</small></span>
+            <button class="del" onclick="deleteProduct(${p.id})">Remove</button>
+          </div>
+        </div>
+      </article>`).join("")
+    : `<div class="empty" style="grid-column:1/-1">You haven't added any products yet.<br>Fill in the form to list your first one.</div>`;
+}
+
+if (user && user.role === "Store Owner") renderMine();
+</script>
+</body>
+</html>
